@@ -1,6 +1,8 @@
 """
 Test email addresses against a database of known third party data breaches.
 
+Usage: python ./audit.py --input_file=emails.txt
+
 References:
 * https://haveibeenpwned.com/FAQs
 """
@@ -31,7 +33,14 @@ def do_audit(input_file):
                     results[address] = 'Not included in breach DB'
                 else:
                     results[address] = 'API response code: {}'.format(resp.status_code)
-    print(results)
+            print('{}: {}'.format(address, results[address]))
+    output_results(results)
+
+def output_results(results):
+    breached = {key: value for key, value in results.items() if value != 'Not included in breach DB'}
+    print()
+    print('Potentially breached accounts:')
+    print(breached)
 
 if __name__ == '__main__':
     do_audit()
