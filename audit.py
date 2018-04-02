@@ -4,6 +4,8 @@ Test email addresses against a database of known third party data breaches.
 References:
 * https://haveibeenpwned.com/FAQs
 """
+import time
+
 import click
 import requests
 
@@ -17,6 +19,8 @@ def do_audit(input_file):
         for address in address_file:
             address = address.strip()
             url = '{}{}'.format(BASE_URL, address)
+            # avoid getting rate limited, see https://haveibeenpwned.com/API/v2#RateLimiting
+            time.sleep(1.6)
             resp = requests.get(url)
             if resp.ok:
                 num_breaches = len(resp.json())
